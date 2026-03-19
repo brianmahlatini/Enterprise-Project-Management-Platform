@@ -1,0 +1,10 @@
+<div class="avatars" aria-label="Team members">
+  <div
+    *ngFor="let member of members()"
+    class="avatar"
+    [style.background]="member.avatarColor"
+    [attr.title]="member.name"
+  >
+    {{ member.initials }}
+  </div>
+</div>

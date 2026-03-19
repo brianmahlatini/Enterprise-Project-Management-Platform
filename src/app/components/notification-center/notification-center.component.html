@@ -1,0 +1,13 @@
+<div class="notification-panel" role="dialog" aria-label="Notification center">
+  <div class="panel-header">
+    <h3>Notifications</h3>
+    <button (click)="close.emit()">Close</button>
+  </div>
+  <div class="panel-body">
+    <div *ngFor="let note of notifications" class="notification" [class.unread]="!note.read">
+      <p>{{ note.message }}</p>
+      <small>{{ note.createdAt | date:'short' }}</small>
+      <button *ngIf="!note.read" (click)="markRead.emit(note.id)">Mark read</button>
+    </div>
+  </div>
+</div>

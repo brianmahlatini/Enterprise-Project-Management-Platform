@@ -1,0 +1,58 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo">Enterprise PM</div>
+    <nav class="nav">
+      <a routerLink="/workspace" routerLinkActive="active">Workspace</a>
+      <a routerLink="/boards/board-1" routerLinkActive="active">Boards</a>
+      <a routerLink="/reports" routerLinkActive="active">Reports</a>
+      <a routerLink="/settings" routerLinkActive="active">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <p class="small">Offline cache enabled</p>
+      <p class="small muted">Last sync: just now</p>
+    </div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div class="page-title">
+        <h1>Enterprise Project Management</h1>
+        <p>Workspace → Boards → Lists → Cards</p>
+      </div>
+      <div class="topbar-actions">
+        <input
+          type="search"
+          placeholder="Search tasks, labels, owners"
+          class="search"
+          [value]="ui()?.searchQuery || ''"
+          (input)="updateSearch($any($event.target).value)"
+          aria-label="Search tasks"
+        />
+        <button
+          class="ghost"
+          *ngIf="ui()?.searchQuery"
+          (click)="clearSearch()"
+          aria-label="Clear search"
+        >
+          Clear
+        </button>
+        <app-member-avatars></app-member-avatars>
+        <button class="icon-button" (click)="toggleNotifications()" aria-label="Notifications">
+          <span class="dot" *ngIf="notifications().some(n => !n.read)"></span>
+          Notifications
+        </button>
+      </div>
+    </header>
+
+    <div class="router-slot">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+  <app-notification-center
+    *ngIf="showNotifications()"
+    [notifications]="notifications()"
+    (close)="toggleNotifications()"
+    (markRead)="markRead($event)"
+  ></app-notification-center>
+</div>

@@ -1,0 +1,14 @@
+<section class="workspace">
+  <h2>Workspaces</h2>
+  <div class="boards">
+    <a
+      *ngFor="let board of boards()"
+      class="board-card"
+      [routerLink]="['/boards', board.id]"
+    >
+      <h3>{{ board.title }}</h3>
+      <p>{{ board.description }}</p>
+      <span>Open board →</span>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,25 @@
+<div class="invite">
+  <div class="header">
+    <h2>Invite teammates</h2>
+    <button (click)="close()">Close</button>
+  </div>
+
+  <label>
+    Shareable link
+    <div class="link-row">
+      <input [value]="inviteLink" readonly />
+      <button (click)="copyLink()">Copy</button>
+    </div>
+  </label>
+
+  <div class="member-list">
+    <h3>Members</h3>
+    <div class="member" *ngFor="let member of members()">
+      <span class="avatar" [style.background]="member.avatarColor">{{ member.initials }}</span>
+      <div>
+        <strong>{{ member.name }}</strong>
+        <small>{{ member.role }}</small>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,131 @@
+<section class="board">
+  <div class="board-header">
+    <div>
+      <h2>{{ board()?.title }}</h2>
+      <p>{{ board()?.description }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="ghost" (click)="toggleActivity()">
+        {{ showActivity() ? 'Hide Activity' : 'Show Activity' }}
+      </button>
+      <button class="ghost" (click)="openInvite()">Invite</button>
+      <button class="primary" (click)="addList()">New List</button>
+    </div>
+  </div>
+
+  <div class="search-banner" *ngIf="isSearchActive()">
+    Search filter active. Drag & drop is still enabled.
+  </div>
+
+  <div class="board-layout">
+    <div class="board-body" cdkDropListGroup>
+      <div class="list-column" *ngFor="let list of lists()">
+        <div class="list-header">
+          <h3>{{ list.title }}</h3>
+          <span class="badge">{{ filteredCards(list.id).length }}</span>
+        </div>
+
+        <button class="ghost" (click)="addCard(list.id)" aria-label="Add card">
+          + Add card
+        </button>
+
+        <ng-container *ngIf="listCards(list.id).length > 8; else standardList">
+          <cdk-virtual-scroll-viewport
+            itemSize="120"
+            class="card-list virtual"
+            cdkDropList
+            [cdkDropListData]="filteredCards(list.id)"
+            (cdkDropListDropped)="drop(list.id, $event)"
+          >
+            <div
+              class="card"
+              *cdkVirtualFor="let card of filteredCards(list.id); trackBy: trackByCardId"
+              cdkDrag
+              [cdkDragData]="card"
+              (click)="openCard(card)"
+            >
+              <div class="card-top" cdkDragHandle>
+                <span class="priority" [class.high]="card.priority === 'high' || card.priority === 'urgent'">
+                  {{ card.priority }}
+                </span>
+                <span class="sync" *ngIf="card.isSyncing">syncing</span>
+              </div>
+              <h4>{{ card.title }}</h4>
+              <p>{{ card.description || 'Add a description...' }}</p>
+              <div class="labels">
+                <span *ngFor="let label of card.labels">{{ label }}</span>
+              </div>
+              <div class="assignees">
+                <span
+                  *ngFor="let member of members().filter(m => card.assigneeIds.includes(m.id))"
+                  [style.background]="member.avatarColor"
+                >
+                  {{ member.initials }}
+                </span>
+              </div>
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </ng-container>
+
+        <ng-template #standardList>
+          <div
+            class="card-list"
+            cdkDropList
+            [cdkDropListData]="filteredCards(list.id)"
+            (cdkDropListDropped)="drop(list.id, $event)"
+          >
+            <div
+              class="card"
+              *ngFor="let card of filteredCards(list.id); trackBy: trackByCardId"
+              cdkDrag
+              [cdkDragData]="card"
+              (click)="openCard(card)"
+            >
+              <div class="card-top" cdkDragHandle>
+                <span class="priority" [class.high]="card.priority === 'high' || card.priority === 'urgent'">
+                  {{ card.priority }}
+                </span>
+                <span class="sync" *ngIf="card.isSyncing">syncing</span>
+              </div>
+              <h4>{{ card.title }}</h4>
+              <p>{{ card.description || 'Add a description...' }}</p>
+              <div class="labels">
+                <span *ngFor="let label of card.labels">{{ label }}</span>
+              </div>
+              <div class="assignees">
+                <span
+                  *ngFor="let member of members().filter(m => card.assigneeIds.includes(m.id))"
+                  [style.background]="member.avatarColor"
+                >
+                  {{ member.initials }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <aside
+      class="side-panel"
+      aria-label="Activity timeline"
+      *ngIf="showActivity()"
+    >
+      <div class="side-panel-header">
+        <h3>Activity</h3>
+        <button class="ghost" (click)="toggleActivity()">Close</button>
+      </div>
+      <cdk-virtual-scroll-viewport itemSize="72" class="activity-list">
+        <div class="activity-card" *cdkVirtualFor="let activity of activities()">
+          <p>{{ activity.message }}</p>
+          <small>{{ activity.createdAt | date:'short' }}</small>
+        </div>
+      </cdk-virtual-scroll-viewport>
+      <div class="shortcut">
+        <strong>Shortcuts</strong>
+        <p><code>Ctrl + K</code> Focus search</p>
+        <p><code>N</code> New card</p>
+      </div>
+    </aside>
+  </div>
+</section>
